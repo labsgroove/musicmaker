@@ -895,4 +895,90 @@ export class AudioEngine {
   getAnalyser(): AnalyserNode | null {
     return this.analyser
   }
+
+  // Apply AI-generated pattern
+  applyAIPattern(pattern: {
+    scale: 'minor' | 'phrygian' | 'pentatonic'
+    key: number
+    bpm?: number
+    bassPattern: Array<{ step: number; note: number; slide: boolean; accent: boolean }>
+    synthPattern: Array<{ step: number; note: number; velocity: number }>
+    kickPattern: Array<{ step: number; velocity: number; offset: number }>
+    snarePattern: Array<{ step: number; velocity: number }>
+    hihatPattern: Array<{ step: number; open: boolean; velocity: number }>
+  }) {
+    // Update scale and key
+    this.currentKey = pattern.key
+    const baseFreq = 55 * Math.pow(2, this.currentKey / 12)
+    this.currentScale = this.generateScale(baseFreq, pattern.scale)
+
+    // Update BPM if provided
+    if (pattern.bpm && pattern.bpm !== this.bpm) {
+      this.setBpm(pattern.bpm)
+    }
+
+    // Convert AI patterns to internal format (16 steps)
+    this.bassPattern = Array(16).fill(null).map((_, i) => {
+      const aiNote = pattern.bassPattern.find(p => p.step === i)
+      return {
+        active: !!aiNote,
+        note: aiNote?.note ?? 0,
+        slide: aiNote?.slide ?? false,
+        accent: aiNote?.accent ?? false
+      }
+    })
+
+    this.synthPattern = Array(16).fill(null).map((_, i) => {
+      const aiNote = pattern.synthPattern.find(p => p.step === i)
+      return {
+        active: !!aiNote,
+        note: aiNote?.note ?? 0,
+        velocity: aiNote?.velocity ?? 0.5
+      }
+    })
+
+    this.kickPattern = Array(16).fill(null).map((_, i) => {
+      const aiHit = pattern.kickPattern.find(p => p.step === i)
+      return {
+        active: !!aiHit,
+        velocity: aiHit?.velocity ?? (i % 4 === 0 ? 1 : 0.7),
+        offset: aiHit?.offset ?? (i % 2 !== 0 ? 0.02 : 0)
+      }
+    })
+
+    this.snarePattern = Array(16).fill(null).map((_, i) => {
+      const aiHit = pattern.snarePattern.find(p => p.step === i)
+      return {
+        active: !!aiHit,
+        velocity: aiHit?.velocity ?? (i === 4 || i === 12 ? 0.9 : 0.4)
+      }
+    })
+
+    this.hihatPattern = Array(16).fill(null).map((_, i) => {
+      const aiHit = pattern.hihatPattern.find(p => p.step === i)
+      return {
+        active: !!aiHit,
+        open: aiHit?.open ?? false,
+        velocity: aiHit?.velocity ?? 0.5
+      }
+    })
+
+    // Regenerate percussion with random variations
+    this.percPattern = Array(16).fill(null).map((_, i) => {
+      const types: Array<'clap' | 'rim' | 'tom'> = ['clap', 'rim', 'tom']
+      return {
+        active: (i === 7 || i === 15 || (i === 3 && Math.random() > 0.6)),
+        velocity: 0.5 + Math.random() * 0.3,
+        type: types[Math.floor(Math.random() * types.length)]
+      }
+    })
+  }
+
+  getCurrentPatternInfo() {
+    return {
+      key: this.currentKey,
+      scale: this.currentScale,
+      bpm: this.bpm
+    }
+  }
 }

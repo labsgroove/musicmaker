@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import DJDeck from './components/DJDeck'
 import Visualizer from './components/Visualizer'
 import Controls from './components/Controls'
+import { AIGenerator } from './components/AIGenerator'
+import { MelodyPattern } from './services/GeminiService'
 import TrackInfo from './components/TrackInfo'
 import { AudioEngine } from './audio/AudioEngine'
 
@@ -71,13 +73,11 @@ function App() {
     return () => clearInterval(interval)
   }, [isPlaying, audioEngine])
 
-  const handleTrackChange = useCallback((track: string, deck: 'current' | 'next') => {
-    if (deck === 'current') {
-      setCurrentTrack(track)
-    } else {
-      setNextTrack(track)
-    }
-  }, [])
+  const handlePatternGenerated = useCallback((pattern: MelodyPattern) => {
+    audioEngine.applyAIPattern(pattern)
+    setCurrentTrack(pattern.trackName || 'AI Generated')
+    setBpm(pattern.bpm)
+  }, [audioEngine])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dj-dark via-[#1a1a2e] to-dj-dark text-white overflow-hidden">
@@ -115,6 +115,11 @@ function App() {
       <main className="p-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-3 space-y-4">
+            <AIGenerator 
+              currentBpm={bpm}
+              onPatternGenerated={handlePatternGenerated}
+              disabled={isInitializing}
+            />
             <TrackInfo 
               title={currentTrack} 
               label="NOW PLAYING" 
@@ -146,7 +151,7 @@ function App() {
                 isPlaying={isPlaying}
                 isActive={true}
                 bpm={bpm}
-                onTrackChange={(track) => handleTrackChange(track, 'current')}
+                onTrackChange={(track) => setCurrentTrack(track)}
                 audioEngine={audioEngine}
               />
               <DJDeck 
@@ -154,7 +159,7 @@ function App() {
                 isPlaying={isPlaying}
                 isActive={false}
                 bpm={bpm}
-                onTrackChange={(track) => handleTrackChange(track, 'next')}
+                onTrackChange={(track) => setNextTrack(track)}
                 audioEngine={audioEngine}
               />
             </div>
