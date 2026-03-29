@@ -7,12 +7,13 @@ interface TrackInfoProps {
   bpm: number
 }
 
-const minimalPrefixes = ['Acid', 'Deep', 'Raw', 'Analog', 'Digital', 'Berlin', 'Detroit', 'Industrial', 'Hypnotic', 'Resonant']
-const minimalSuffixes = ['Sequence', 'Loop', 'Pattern', 'Drum', 'Bass', 'Synth', 'Texture', 'Modulation', 'Oscillator', 'Filter']
+const modernPrefixes = ['Acid', 'Melodic', 'Deep', 'Progressive', 'Raw', 'Analog', 'Berlin', 'Detroit', 'Hypnotic', 'Resonant', 'Saw', 'FM', 'Granular', 'Wavetable']
+const modernSuffixes = ['Sequence', 'Bassline', 'Arp', 'Pluck', 'Pad', 'Riser', 'Drop', 'Build', 'Texture', 'Sustain']
+const genres = ['Melodic Techno', 'Acid House', 'Tech House', 'Progressive House', 'Deep Techno', 'Peak Time Techno']
 
 const generateTrackName = () => {
-  const prefix = minimalPrefixes[Math.floor(Math.random() * minimalPrefixes.length)]
-  const suffix = minimalSuffixes[Math.floor(Math.random() * minimalSuffixes.length)]
+  const prefix = modernPrefixes[Math.floor(Math.random() * modernPrefixes.length)]
+  const suffix = modernSuffixes[Math.floor(Math.random() * modernSuffixes.length)]
   const number = String(Math.floor(Math.random() * 99)).padStart(2, '0')
   return `${prefix} ${suffix} ${number}`
 }
@@ -56,7 +57,7 @@ export default function TrackInfo({ title, label, isActive, bpm }: TrackInfoProp
         {displayTitle}
       </h3>
       <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-        <span>Minimal Techno</span>
+        <span>{genres[Math.floor(Math.random() * genres.length)]}</span>
         <span className="font-mono">{bpm} BPM</span>
       </div>
       {isActive && (

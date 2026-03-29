@@ -13,6 +13,7 @@ function App() {
   const [nextTrack, setNextTrack] = useState<string>('Preparing...')
   const [bpm, setBpm] = useState(128)
   const [masterVolume, setMasterVolume] = useState(80)
+  const [arrangementPhase, setArrangementPhase] = useState<'intro' | 'build' | 'drop' | 'break'>('intro')
   const startTimeRef = useRef<number>(0)
 
   const handlePlayPause = useCallback(async () => {
@@ -59,6 +60,17 @@ function App() {
     audioEngine.setMasterVolume(volume / 100)
   }, [audioEngine])
 
+  // Update arrangement phase periodically
+  useEffect(() => {
+    if (!isPlaying) return
+
+    const interval = setInterval(() => {
+      setArrangementPhase(audioEngine.getArrangementPhase())
+    }, 500)
+
+    return () => clearInterval(interval)
+  }, [isPlaying, audioEngine])
+
   const handleTrackChange = useCallback((track: string, deck: 'current' | 'next') => {
     if (deck === 'current') {
       setCurrentTrack(track)
@@ -78,8 +90,8 @@ function App() {
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-bold font-['Orbitron'] neon-text">MINIMAL BOT</h1>
-              <p className="text-xs text-dj-accent/70">AI-Powered DJ • Real-time Generation</p>
+              <h1 className="text-2xl font-bold font-['Orbitron'] neon-text">MELODIC BOT</h1>
+              <p className="text-xs text-dj-accent/70">AI-Powered Producer • Modern Electronic Music</p>
             </div>
           </div>
           <div className="flex items-center gap-6">
@@ -119,6 +131,7 @@ function App() {
               isPlaying={isPlaying}
               bpm={bpm}
               volume={masterVolume}
+              arrangementPhase={arrangementPhase}
               onPlayPause={handlePlayPause}
               onBpmChange={handleBpmChange}
               onVolumeChange={handleVolumeChange}
@@ -174,8 +187,8 @@ function App() {
                 </div>
                 <hr className="border-dj-accent/20" />
                 <div className="text-xs text-gray-500 mt-4">
-                  <p>Generating unique minimal techno tracks using procedural algorithms.</p>
-                  <p className="mt-2">Each pattern is created in real-time using mathematical composition techniques.</p>
+                  <p>Generating modern electronic music with acid basslines, supersaw leads, and dynamic FX.</p>
+                  <p className="mt-2">Features: Sidechain compression, layered drums, arpeggios, risers & impacts.</p>
                 </div>
               </div>
             </div>

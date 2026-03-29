@@ -2,6 +2,7 @@ interface ControlsProps {
   isPlaying: boolean
   bpm: number
   volume: number
+  arrangementPhase?: 'intro' | 'build' | 'drop' | 'break'
   onPlayPause: () => void
   onBpmChange: (bpm: number) => void
   onVolumeChange: (volume: number) => void
@@ -12,6 +13,7 @@ export default function Controls({
   isPlaying, 
   bpm, 
   volume, 
+  arrangementPhase = 'intro',
   onPlayPause, 
   onBpmChange, 
   onVolumeChange,
@@ -94,7 +96,7 @@ export default function Controls({
         </div>
 
         <div className="grid grid-cols-2 gap-2 pt-2">
-          <button 
+          <button
             className="py-2 px-3 rounded-lg bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-xs text-gray-300 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-dj-accent/30 disabled:opacity-50"
             title="Automix (em breve)"
             disabled
@@ -106,18 +108,21 @@ export default function Controls({
               AUTO MIX
             </span>
           </button>
-          <button 
-            className="py-2 px-3 rounded-lg bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-xs text-gray-300 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-dj-accent/30 disabled:opacity-50"
-            title="Efeitos (em breve)"
-            disabled
+          <div
+            className={`py-2 px-3 rounded-lg text-xs transition-all duration-150 flex items-center justify-center gap-1 ${
+              arrangementPhase === 'drop'
+                ? 'bg-dj-secondary/30 text-dj-secondary border border-dj-secondary/50'
+                : arrangementPhase === 'build'
+                  ? 'bg-dj-accent/30 text-dj-accent border border-dj-accent/50'
+                  : 'bg-gray-800 text-gray-400 border border-gray-700'
+            }`}
+            title={`Phase: ${arrangementPhase.toUpperCase()}`}
           >
-            <span className="flex items-center justify-center gap-1">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>
-              </svg>
-              FX RACK
-            </span>
-          </button>
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>
+            </svg>
+            {arrangementPhase.toUpperCase()}
+          </div>
         </div>
       </div>
     </div>

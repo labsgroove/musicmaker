@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
+// Visualizer component
 
 interface VisualizerProps {
   audioEngine: { getAnalyser?: () => AnalyserNode | null }
