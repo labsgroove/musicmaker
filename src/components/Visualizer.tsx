@@ -40,12 +40,12 @@ export default function Visualizer({ audioEngine, isPlaying }: VisualizerProps) 
       const width = canvas.offsetWidth
       const height = canvas.offsetHeight
       
-      ctx.fillStyle = 'rgba(10, 10, 15, 0.3)'
+      ctx.fillStyle = 'rgba(17, 24, 39, 0.3)'
       ctx.fillRect(0, 0, width, height)
 
-      const barCount = 64
+      const barCount = 32
       const barWidth = width / barCount
-      const barGap = 2
+      const barGap = 1
 
       const audioData = getAudioData()
 
@@ -55,27 +55,23 @@ export default function Visualizer({ audioEngine, isPlaying }: VisualizerProps) 
         if (audioData && isPlaying) {
           const dataIndex = Math.floor((i / barCount) * (audioData.length / 2))
           const value = audioData[dataIndex] || 0
-          barHeight = (value / 255) * height * 0.9
+          barHeight = (value / 255) * height * 0.8
         } else {
-          const targetHeight = isPlaying ? Math.random() * height * 0.5 : 0
+          const targetHeight = isPlaying ? Math.random() * height * 0.3 : 0
           barsRef.current[i] += (targetHeight - barsRef.current[i]) * 0.1
           barHeight = barsRef.current[i]
         }
 
-        const h = Math.max(2, barHeight)
+        const h = Math.max(1, barHeight)
         const x = i * barWidth + barGap / 2
         const y = (height - h) / 2
 
         const gradient = ctx.createLinearGradient(0, y, 0, y + h)
-        gradient.addColorStop(0, '#00d4ff')
-        gradient.addColorStop(0.5, '#ff006e')
-        gradient.addColorStop(1, '#00d4ff')
+        gradient.addColorStop(0, '#3b82f6')
+        gradient.addColorStop(1, '#60a5fa')
 
         ctx.fillStyle = gradient
         ctx.fillRect(x, y, barWidth - barGap, h)
-
-        ctx.fillStyle = 'rgba(0, 212, 255, 0.3)'
-        ctx.fillRect(x, y + h, barWidth - barGap, 2)
       }
 
       animationRef.current = requestAnimationFrame(draw)
@@ -92,14 +88,14 @@ export default function Visualizer({ audioEngine, isPlaying }: VisualizerProps) 
   }, [isPlaying])
 
   return (
-    <div className="bg-dj-panel/60 backdrop-blur-sm rounded-xl p-4 border border-dj-accent/20">
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-dj-accent font-['Orbitron'] text-sm">FREQUENCY ANALYZER</span>
+    <div className="bg-gray-800 rounded-xl p-3 border border-gray-700 h-full">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-blue-400 font-semibold text-xs">AUDIO VISUALIZER</span>
         <div className="flex gap-1">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <div 
               key={i} 
-              className={`w-1 h-4 rounded-full ${isPlaying ? 'bg-dj-success animate-pulse' : 'bg-gray-600'}`}
+              className={`w-0.5 h-3 rounded-full ${isPlaying ? 'bg-green-400 animate-pulse' : 'bg-gray-600'}`}
               style={{ animationDelay: `${i * 0.1}s` }}
             />
           ))}
@@ -107,7 +103,7 @@ export default function Visualizer({ audioEngine, isPlaying }: VisualizerProps) 
       </div>
       <canvas 
         ref={canvasRef}
-        className="w-full h-32 rounded-lg bg-dj-dark/50"
+        className="w-full h-16 rounded-lg bg-gray-900"
       />
     </div>
   )

@@ -80,72 +80,44 @@ function App() {
   }, [audioEngine])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dj-dark via-[#1a1a2e] to-dj-dark text-white overflow-hidden">
-      <header className="px-6 py-4 border-b border-dj-accent/20 bg-dj-panel/50 backdrop-blur-sm">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-dj-accent to-dj-secondary flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold font-['Orbitron'] neon-text">MELODIC BOT</h1>
-              <p className="text-xs text-dj-accent/70">AI-Powered Producer • Modern Electronic Music</p>
-            </div>
+    <div className="min-h-screen bg-gray-950 text-white flex flex-col overflow-hidden" style={{width: '100vw', height: '100vh'}}>
+      {/* Header Profissional */}
+      <header className="px-6 py-4 border-b border-gray-800 bg-gray-900" style={{width: '100%'}}>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold text-white">MELODIC BOT</h1>
+            <span className="text-sm text-gray-400">AI Music Producer</span>
           </div>
           <div className="flex items-center gap-6">
-            <div className="text-right">
-              <div className="text-3xl font-mono font-bold text-dj-accent">{bpm}</div>
-              <div className="text-xs text-gray-400">BPM</div>
-            </div>
-            <div className={`px-4 py-2 rounded-lg font-mono text-sm transition-all duration-300 ${
+            <div className="text-lg font-mono text-blue-400">{bpm} BPM</div>
+            <div className={`px-3 py-1 rounded-lg text-sm font-medium ${
               isInitializing 
-                ? 'bg-yellow-500/20 text-yellow-400 animate-pulse' 
+                ? 'bg-yellow-500/20 text-yellow-400' 
                 : isPlaying 
-                  ? 'bg-dj-success/20 text-dj-success' 
-                  : 'bg-dj-secondary/20 text-dj-secondary'
+                  ? 'bg-green-500/20 text-green-400' 
+                  : 'bg-gray-500/20 text-gray-400'
             }`}>
-              {isInitializing ? '◉ INIT...' : isPlaying ? '● LIVE' : '○ STANDBY'}
+              {isInitializing ? 'INITIALIZING' : isPlaying ? 'LIVE' : 'READY'}
             </div>
           </div>
         </div>
       </header>
 
-      <main className="p-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-3 space-y-4">
+      {/* Main Content Layout Profissional */}
+      <main className="flex-1 p-6 overflow-hidden" style={{width: '100%'}}>
+        <div className="h-full w-full grid grid-cols-12 gap-6" style={{width: '100%', height: '100%'}}>
+          {/* Coluna Esquerda - AI Generator */}
+          <div className="col-span-3" style={{width: '25%', height: '100%'}}>
             <AIGenerator 
               currentBpm={bpm}
               onPatternGenerated={handlePatternGenerated}
               disabled={isInitializing}
             />
-            <TrackInfo 
-              title={currentTrack} 
-              label="NOW PLAYING" 
-              isActive={isPlaying}
-              bpm={bpm}
-            />
-            <TrackInfo 
-              title={nextTrack} 
-              label="UP NEXT" 
-              isActive={false}
-              bpm={bpm}
-            />
-            <Controls
-              isPlaying={isPlaying}
-              bpm={bpm}
-              volume={masterVolume}
-              arrangementPhase={arrangementPhase}
-              onPlayPause={handlePlayPause}
-              onBpmChange={handleBpmChange}
-              onVolumeChange={handleVolumeChange}
-              disabled={isInitializing}
-            />
           </div>
 
-          <div className="lg:col-span-6 space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+          {/* Coluna Central - Decks */}
+          <div className="col-span-6" style={{width: '50%', height: '100%'}}>
+            <div className="h-full grid grid-cols-2 gap-4">
               <DJDeck 
                 deckNumber={1} 
                 isPlaying={isPlaying}
@@ -163,43 +135,71 @@ function App() {
                 audioEngine={audioEngine}
               />
             </div>
-            <Visualizer audioEngine={audioEngine} isPlaying={isPlaying} />
           </div>
 
-          <div className="lg:col-span-3">
-            <div className="bg-dj-panel/60 backdrop-blur-sm rounded-xl p-4 border border-dj-accent/20 h-full">
-              <h3 className="text-dj-accent font-['Orbitron'] text-sm mb-4">GENERATOR STATUS</h3>
-              <div className="space-y-3 text-sm">
+          {/* Coluna Direita - Controles e Info */}
+          <div className="col-span-3 flex flex-col gap-4" style={{width: '25%', height: '100%'}}>
+            {/* Track Info */}
+            <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+              <h3 className="text-blue-400 font-semibold text-sm mb-3">NOW PLAYING</h3>
+              <div className="space-y-2">
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">Current</div>
+                  <div className={`text-sm font-medium ${isPlaying ? 'text-green-400' : 'text-gray-400'}`}>
+                    {currentTrack}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">Next</div>
+                  <div className="text-sm font-medium text-gray-400">
+                    {nextTrack}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Controles */}
+            <div className="flex-1">
+              <Controls
+                isPlaying={isPlaying}
+                bpm={bpm}
+                volume={masterVolume}
+                arrangementPhase={arrangementPhase}
+                onPlayPause={handlePlayPause}
+                onBpmChange={handleBpmChange}
+                onVolumeChange={handleVolumeChange}
+                disabled={isInitializing}
+              />
+            </div>
+
+            {/* System Status */}
+            <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+              <h3 className="text-blue-400 font-semibold text-sm mb-3">SYSTEM STATUS</h3>
+              <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Melody Engine</span>
-                  <span className="text-dj-success">● Active</span>
+                  <span className="text-gray-500">Engine</span>
+                  <span className="text-green-400">● Active</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Drum Synthesis</span>
-                  <span className="text-dj-success">● Active</span>
+                  <span className="text-gray-500">Generator</span>
+                  <span className="text-green-400">● Active</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Bass Generator</span>
-                  <span className="text-dj-success">● Active</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">FX Processor</span>
-                  <span className="text-dj-success">● Active</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Mixer</span>
-                  <span className="text-dj-success">● Active</span>
-                </div>
-                <hr className="border-dj-accent/20" />
-                <div className="text-xs text-gray-500 mt-4">
-                  <p>Generating modern electronic music with acid basslines, supersaw leads, and dynamic FX.</p>
-                  <p className="mt-2">Features: Sidechain compression, layered drums, arpeggios, risers & impacts.</p>
+                  <span className="text-gray-500">Mixer</span>
+                  <span className="text-green-400">● Active</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Visualizer Footer */}
+      <div className="h-24 border-t border-gray-800 bg-gray-900" style={{width: '100%'}}>
+        <div className="w-full h-full p-4">
+          <Visualizer audioEngine={audioEngine} isPlaying={isPlaying} />
+        </div>
+      </div>
     </div>
   )
 }
